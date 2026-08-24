@@ -1,0 +1,42 @@
+﻿plugins {
+	alias(libs.plugins.fabric.loom.remap)
+}
+
+lcullPlatform(Loader.FabricO)
+
+loom {
+	runs.named("client") {
+		client()
+		ideConfigGenerated(true)
+		runDir = "run/"
+		environment = "client"
+		programArgs("--username=Dev")
+		configName = "Fabric Client"
+	}
+	runs.named("server") {
+		server()
+		ideConfigGenerated(true)
+		runDir = "run/"
+		environment = "server"
+		configName = "Fabric Server"
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+configurations.all {
+	resolutionStrategy {
+		force("net.fabricmc:fabric-loader:${prop("deps.fabric-loader")}")
+	}
+}
+
+dependencies {
+	minecraft("com.mojang:minecraft:${prop("deps.minecraft")}")
+	mappings(loom.layered { officialMojangMappings() })
+	modImplementation("net.fabricmc:fabric-loader:${prop("deps.fabric-loader")}")
+	if (sc.current.parsed < "1.21.11") {
+		compileOnly("org.jspecify:jspecify:1.0.0")
+	}
+}
