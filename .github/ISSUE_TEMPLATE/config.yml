@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: LCull Issues
+    url: https://github.com/Starlevka/LCull/issues
+    about: Search existing issues before reporting a bug.
