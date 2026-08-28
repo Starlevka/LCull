@@ -16,6 +16,12 @@ fun File.stripBlockComments(): File {
 	return this
 }
 
+fun File.stripUtf8Bom(): File {
+	val text = readText(Charsets.UTF_8)
+	if (text.startsWith('\uFEFF')) writeText(text.substring(1), Charsets.UTF_8)
+	return this
+}
+
 private val MIXIN_SOURCE_ROOT = "starl/lcull/mixins"
 
 @OptIn(StonecutterExperimentalAPI::class)
@@ -51,19 +57,22 @@ fun Project.lcullPlatform(loader: Loader) {
 	val mixinsJson = sc.process(
 		rootProject.file("src/stonecutter/lcull.mixins.json5"),
 		"build/processed/${sc.current.project}/mixins/lcull.mixins.json"
-	).stripBlockComments()
+	).stripBlockComments().stripUtf8Bom()
 	mainSourceSet.resources.srcDir(mixinsJson.parentFile)
+
+	if (loader == Loader.Forge) {
+		// Production Forge remaps member names to SRG. The packaged lcull.refmap.json
+		// (wired by the legacyforge mixin extension, see build.forge.gradle.kts) is only
+		// loaded when the config references it explicitly - without this key Mixin logs
+		// "No refMap loaded" and every @Inject/@ModifyConstant fails on obfuscated targets.
+		val text = mixinsJson.readText(Charsets.UTF_8)
+		mixinsJson.writeText(text.replaceFirst("{", "{\n  \"refmap\": \"lcull.refmap.json\","))
+	}
 
 	// Refresh license headers on the shared source tree before compiling each variant,
 	// so new classes and template edits converge without manual steps (see root licenseHeaders).
 	tasks.named("compileJava") {
 		dependsOn(rootProject.tasks.named("licenseHeaders"))
-	}
-
-	tasks.named<ProcessResources>("processResources") {
-		// Ship the project license text inside every jar so Modrinth/CurseForge scanners
-		// and end users can verify the terms without visiting the repository.
-		from(rootProject.file("LICENSE"))
 	}
 
 	excludeUnlistedMixins(mainSources, mixinsJson)

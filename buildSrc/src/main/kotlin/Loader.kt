@@ -35,6 +35,7 @@ sealed class Loader(val id: String) {
 				}
 				appendLine("  },")
 				appendLine("  \"description\": ${jsonStr(ctx.description)},")
+				appendLine("  \"icon\": ${jsonStr("assets/${ctx.modId}/icon.png")},")
 				appendLine("  \"license\": \"LGPL-3.0-only\",")
 				appendLine("  \"environment\": \"*\",")
 				appendLine("  \"entrypoints\": {")
@@ -103,6 +104,7 @@ sealed class Loader(val id: String) {
 				appendLine("displayName = \"${ctx.modName}\"")
 				appendLine("authors = \"${ctx.authors.firstOrNull() ?: "Starlev"}\"")
 				appendLine("description = \"\"\"${ctx.description}\"\"\"")
+				appendLine("logoFile = \"assets/${ctx.modId}/icon.png\"")
 				appendLine()
 				appendLine("[[mixins]]")
 				appendLine("config = \"${ctx.modId}.mixins.json\"")
@@ -152,6 +154,7 @@ sealed class Loader(val id: String) {
 				appendLine("displayName = \"${ctx.modName}\"")
 				appendLine("authors = \"${ctx.authors.firstOrNull() ?: "Starlev"}\"")
 				appendLine("description = \"\"\"${ctx.description}\"\"\"")
+				appendLine("logoFile = \"assets/${ctx.modId}/icon.png\"")
 				appendLine()
 
 				appendLine("[[dependencies.${ctx.modId}]]")
