@@ -1,3 +1,5 @@
+![LCull icon](https://cdn.modrinth.com/data/cached_images/2e7022e9a5f1d124e506e56f3f2075e831c623c5_0.webp)
+
 <sub><i>The project code was created with help of Artificial Intelligence.</i></sub>
 
 An open source mod with cursed, performant Frustum logic for heavy culling scenes. **More FPS, but has some side effects**.
