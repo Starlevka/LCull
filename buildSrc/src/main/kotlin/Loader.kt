@@ -37,7 +37,7 @@ sealed class Loader(val id: String) {
 				appendLine("  \"description\": ${jsonStr(ctx.description)},")
 				appendLine("  \"icon\": ${jsonStr("assets/${ctx.modId}/icon.png")},")
 				appendLine("  \"license\": \"LGPL-3.0-only\",")
-				appendLine("  \"environment\": \"*\",")
+				appendLine("  \"environment\": \"client\",")
 				appendLine("  \"entrypoints\": {")
 				appendLine("    \"main\": [\"starl.lcull.LCull\$Fabric\"]")
 				appendLine("  },")
