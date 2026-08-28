@@ -17,24 +17,6 @@
  * SPDX-License-Identifier: LGPL-3.0-only
  */
 
-/*
- * This file is part of LCull (https://github.com/Starlevka/LCull)
- * Copyright (C) 2026 Starlev (a.k.a. Starlevka) and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, version 3 of the License only.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * SPDX-License-Identifier: LGPL-3.0-only
- */
 
 package starl.lcull.mixins;
 
@@ -55,6 +37,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import starl.lcull.duck.IFrustum;
 
 /**
+ * @author Starlev
  * Fast-path replacements for the client {@link Frustum}, plus the duck implementation backing
  * {@link IFrustum}.
  *
@@ -70,8 +53,6 @@ import starl.lcull.duck.IFrustum;
  *     limit, while this version uses a decaying step and hard limits so the loop always
  *     terminates.</li>
  * </ul>
- *
- * @author Starlev
  */
 @Mixin(Frustum.class)
 public abstract class MFrustum implements IFrustum {
@@ -233,5 +214,20 @@ public abstract class MFrustum implements IFrustum {
             (float) (maxZ - this.camZ)
         );
         return result == -2 || result == -1;
+    }
+
+    @Override
+    public float lcull$viewX() {
+        return this.viewVector != null ? this.viewVector.x() : 0.0F;
+    }
+
+    @Override
+    public float lcull$viewY() {
+        return this.viewVector != null ? this.viewVector.y() : 0.0F;
+    }
+
+    @Override
+    public float lcull$viewZ() {
+        return this.viewVector != null ? this.viewVector.z() : 0.0F;
     }
 }

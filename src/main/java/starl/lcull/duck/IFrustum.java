@@ -20,13 +20,12 @@
 package starl.lcull.duck;
 
 /**
+ * @author Starlev
  * Duck interface over the patched client {@code Frustum}, implemented by
  * {@code MFrustum} and consumed by {@code MEntityRenderer}.
  *
  * <p>Exposes LCull's allocation-free visibility test: raw camera-relative coordinates straight
  * to the shared JOML tester, skipping vanilla's wrapper overhead.</p>
- *
- * @author Starlev
  */
 public interface IFrustum {
 
@@ -42,4 +41,17 @@ public interface IFrustum {
         double maxY,
         double maxZ
     );
+
+    /**
+     * Camera forward direction in world space (the normalized view vector the frustum was built
+     * from). Consumed by {@code MEntityRenderer} to invalidate the per-entity off-screen cache when
+     * the camera rotates, without allocating or reaching for the {@code Camera} instance.
+     */
+    float lcull$viewX();
+
+    /** @see #lcull$viewX() */
+    float lcull$viewY();
+
+    /** @see #lcull$viewX() */
+    float lcull$viewZ();
 }

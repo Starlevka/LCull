@@ -32,6 +32,7 @@ import net.fabricmc.api.ModInitializer;
 //?}
 
 /**
+ * @author Starlev
  * Common mod entrypoint plus the three loader bootstrap adapters as static nested classes.
  *
  * <p>{@link #init()} holds everything loader-independent; each nested adapter is gated to its own
@@ -48,8 +49,6 @@ import net.fabricmc.api.ModInitializer;
  *
  * <p>{@link #VERSION} is filled in by Stonecutter from {@code mod.version} in
  * {@code stonecutter.properties.toml}; the literal below is only the unprocessed fallback.</p>
- *
- * @author Starlev
  */
 public final class LCull {
     public static final String MOD_ID = "lcull";
@@ -62,6 +61,7 @@ public final class LCull {
     /** Single shared init point; safe to call from any loader thread during bootstrap. */
     public static void init() {
         LOGGER.info("LCull v" + VERSION + " Initialized!");
+        LOGGER.info("WARNING! LCULL COULD PRODUCE NEGATIVE PERFORMANCE!");
     }
 
     //? if fabric {

@@ -3,6 +3,8 @@
   "package": "starl.lcull.mixins",
   "compatibilityLevel": "${java}",
   "client": [
+    "MClientChunkCache",
+    "MEntity",
     "MEntityRenderer",
     "MFrustum"
   ],
