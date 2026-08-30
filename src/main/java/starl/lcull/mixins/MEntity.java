@@ -27,15 +27,15 @@ import starl.lcull.duck.ICache;
 /**
  * @author Starlev
  * Attaches the per-entity off-screen frustum cache ({@link ICache}) to every
- * {@link Entity}. The fields are tiny (three longs + a flag) and only consulted on the render
+ * {@link Entity}. The fields are tiny (two longs + a flag) and only consulted on the render
  * cull path, so the memory footprint is negligible even with thousands of entities.
  */
 @Mixin(Entity.class)
 public abstract class MEntity implements ICache {
 
     @Unique private boolean lcull$cachedVisible;
-    @Unique private long lcull$lastSig  = -1L;
-    @Unique private long lcull$lastTick = -1L;
+    @Unique private long lcull$lastEntitySig  = Long.MIN_VALUE;
+    @Unique private long lcull$lastFrustumSig = Long.MIN_VALUE;
 
     @Override
     public boolean lcull$getCachedVisible() {
@@ -48,22 +48,22 @@ public abstract class MEntity implements ICache {
     }
 
     @Override
-    public long lcull$getLastSig() {
-        return this.lcull$lastSig;
+    public long lcull$getLastEntitySig() {
+        return this.lcull$lastEntitySig;
     }
 
     @Override
-    public void lcull$setLastSig(long sig) {
-        this.lcull$lastSig = sig;
+    public void lcull$setLastEntitySig(long sig) {
+        this.lcull$lastEntitySig = sig;
     }
 
     @Override
-    public long lcull$getLastTick() {
-        return this.lcull$lastTick;
+    public long lcull$getLastFrustumSig() {
+        return this.lcull$lastFrustumSig;
     }
 
     @Override
-    public void lcull$setLastTick(long tick) {
-        this.lcull$lastTick = tick;
+    public void lcull$setLastFrustumSig(long sig) {
+        this.lcull$lastFrustumSig = sig;
     }
 }

@@ -17,7 +17,6 @@
  * SPDX-License-Identifier: LGPL-3.0-only
  */
 
-
 package starl.lcull.mixins;
 
 import net.minecraft.client.renderer.culling.Frustum;
@@ -77,6 +76,9 @@ public abstract class MFrustum implements IFrustum {
     @Shadow private double camY;
     @Shadow private double camZ;
 
+    /** Precomputed cache key for the current frustum state, refreshed once per rebuild/mutation. */
+    @Unique private long lcull$frustumSig = Long.MIN_VALUE;
+
     /**
      * Rebuilds the frustum planes with vanilla math while skipping the per-call allocation.
      *
@@ -97,6 +99,7 @@ public abstract class MFrustum implements IFrustum {
         if (this.viewVector == null) this.viewVector = new Vector4f();
         this.viewVector.set(0.0F, 0.0F, 1.0F, 0.0F);
         this.matrix.transformTranspose(this.viewVector);
+        this.lcull$refreshFrustumSig();
         ci.cancel();
     }
     //?} else {
@@ -111,6 +114,7 @@ public abstract class MFrustum implements IFrustum {
         if (this.viewVector == null) this.viewVector = new Vector4f();
         this.viewVector.set(0.0F, 0.0F, 1.0F, 0.0F);
         this.matrix.transformTranspose(this.viewVector);
+        this.lcull$refreshFrustumSig();
         ci.cancel();
     }*/
     //?}
@@ -185,6 +189,7 @@ public abstract class MFrustum implements IFrustum {
                 totalOffset += step;
                 step = Math.max(step * 0.75, 0.5);
             }
+            this.lcull$refreshFrustumSig();
             cir.setReturnValue((Frustum) (Object) this);
         }
     }
@@ -217,6 +222,11 @@ public abstract class MFrustum implements IFrustum {
     }
 
     @Override
+    public long lcull$frustumSig() {
+        return this.lcull$frustumSig;
+    }
+
+    @Override
     public float lcull$viewX() {
         return this.viewVector != null ? this.viewVector.x() : 0.0F;
     }
@@ -229,5 +239,45 @@ public abstract class MFrustum implements IFrustum {
     @Override
     public float lcull$viewZ() {
         return this.viewVector != null ? this.viewVector.z() : 0.0F;
+    }
+
+    /**
+     * Rebuilds the frustum-side cache key from quantized camera position/orientation plus the
+     * projection-sensitive parts of the clip matrix. This is shared by all entities for the frame.
+     */
+    @Unique
+    private void lcull$refreshFrustumSig() {
+        int cx  = lcull$quantize(this.camX, 2.0);
+        int cy  = lcull$quantize(this.camY, 2.0);
+        int cz  = lcull$quantize(this.camZ, 2.0);
+        int vx  = lcull$quantize(this.viewVector != null ? this.viewVector.x() : 0.0F, 64.0);
+        int vy  = lcull$quantize(this.viewVector != null ? this.viewVector.y() : 0.0F, 64.0);
+        int vz  = lcull$quantize(this.viewVector != null ? this.viewVector.z() : 0.0F, 64.0);
+        int m00 = lcull$quantize(this.matrix.m00(), 1024.0);
+        int m11 = lcull$quantize(this.matrix.m11(), 1024.0);
+        int m22 = lcull$quantize(this.matrix.m22(), 1024.0);
+        int m23 = lcull$quantize(this.matrix.m23(), 1024.0);
+
+   long sig = (long) cx;
+        sig = lcull$mix(sig, cy);
+        sig = lcull$mix(sig, cz);
+        sig = lcull$mix(sig, vx);
+        sig = lcull$mix(sig, vy);
+        sig = lcull$mix(sig, vz);
+        sig = lcull$mix(sig, m00);
+        sig = lcull$mix(sig, m11);
+        sig = lcull$mix(sig, m22);
+        sig = lcull$mix(sig, m23);
+        this.lcull$frustumSig = sig;
+    }
+
+    @Unique
+    private static int lcull$quantize(double value, double scale) {
+        return (int) Math.floor(value * scale);
+    }
+
+    @Unique
+    private static long lcull$mix(long acc, int value) {
+        return Long.rotateLeft(acc, 1) ^ (long) value;
     }
 }

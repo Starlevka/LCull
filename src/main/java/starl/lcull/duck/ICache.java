@@ -25,10 +25,10 @@ package starl.lcull.duck;
  * {@code MEntityCullCache} and consumed by {@code MEntityRenderer}.
  *
  * <p>LCull keeps its allocation-free frustum math in {@code MFrustum}; this interface only
- * stores the last computed visibility decision together with a signature of the inputs that
- * produced it (camera position + orientation + entity position) and the tick it was taken. When
- * neither the camera nor the entity has moved enough to change that signature, the cached decision
- * is reused and the {@code intersectAab} test is skipped entirely.</p>
+ * stores the last computed visibility decision together with two cheap signatures: one for the
+ * current frustum state (camera position/orientation/projection) and one for the entity position.
+ * When both still match, the cached decision is reused and the {@code intersectAab} test is
+ * skipped entirely.</p>
  */
 public interface ICache {
 
@@ -38,15 +38,15 @@ public interface ICache {
     /** Stores the last cached visibility decision. */
     void lcull$setCachedVisible(boolean visible);
 
-    /** Signature of the camera/entity state the cached decision was computed under. */
-    long lcull$getLastSig();
+    /** Signature of the entity position the cached decision was computed under. */
+    long lcull$getLastEntitySig();
 
-    /** Stores the signature of the state the cached decision was computed under. */
-    void lcull$setLastSig(long sig);
+    /** Stores the entity-position signature the cached decision was computed under. */
+    void lcull$setLastEntitySig(long sig);
 
-    /** Game time (ticks) at which the cached decision was computed. */
-    long lcull$getLastTick();
+    /** Signature of the frustum state the cached decision was computed under. */
+    long lcull$getLastFrustumSig();
 
-    /** Stores the game time the cached decision was computed. */
-    void lcull$setLastTick(long tick);
+    /** Stores the frustum-state signature the cached decision was computed under. */
+    void lcull$setLastFrustumSig(long sig);
 }
