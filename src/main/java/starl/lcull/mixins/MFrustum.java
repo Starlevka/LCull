@@ -99,6 +99,7 @@ public abstract class MFrustum implements IFrustum {
         if (this.viewVector == null) this.viewVector = new Vector4f();
         this.viewVector.set(0.0F, 0.0F, 1.0F, 0.0F);
         this.matrix.transformTranspose(this.viewVector);
+        this.viewVector.normalize3();
         this.lcull$refreshFrustumSig();
         ci.cancel();
     }
@@ -114,6 +115,7 @@ public abstract class MFrustum implements IFrustum {
         if (this.viewVector == null) this.viewVector = new Vector4f();
         this.viewVector.set(0.0F, 0.0F, 1.0F, 0.0F);
         this.matrix.transformTranspose(this.viewVector);
+        this.viewVector.normalize3();
         this.lcull$refreshFrustumSig();
         ci.cancel();
     }*/
@@ -152,11 +154,6 @@ public abstract class MFrustum implements IFrustum {
             double step             = 2.0;
             double totalOffset      = 0.0;
             double maxOffset        = Math.min(cubeSize * 2, 64.0);
-            double viewVectorLength = Math.sqrt(
-                this.viewVector.x() * this.viewVector.x() +
-                this.viewVector.y() * this.viewVector.y() +
-                this.viewVector.z() * this.viewVector.z()
-            );
 
             for (int i = 0; i < 32; i++) {
                 int r = this.intersection.intersectAab(
@@ -172,14 +169,9 @@ public abstract class MFrustum implements IFrustum {
 
                 if (totalOffset >= maxOffset) break;
 
-                double offsetMagnitude = viewVectorLength * step;
-
-                // Clamp the final step so total travel never exceeds maxOffset.
-                if (totalOffset + offsetMagnitude > maxOffset) {
-                    step = Math.max(
-                        (maxOffset - totalOffset) / offsetMagnitude,
-                        0.5
-                    );
+                if (totalOffset + step > maxOffset) {
+                    step = maxOffset - totalOffset;
+                    if (step < 1.0E-6D) break;
                 }
 
                 // Step the origin backwards along the view direction (vanilla mutates too).

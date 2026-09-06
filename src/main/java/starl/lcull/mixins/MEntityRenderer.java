@@ -47,7 +47,6 @@ import starl.lcull.duck.IFrustum;
 @Mixin(value = EntityRenderer.class, priority = 600)
 public abstract class MEntityRenderer<T extends Entity> {
 
-
     /** Squared radius under which display entities always defer to vanilla (5 blocks, squared). */
     @Unique private static final double DISPLAY_CULL_RADIUS_SQ = 25.0;
 
@@ -82,7 +81,6 @@ public abstract class MEntityRenderer<T extends Entity> {
         double dy     = entity.getY() - camY;
         double dz     = entity.getZ() - camZ;
         double distSq = dx * dx + dy * dy + dz * dz;
-
 
         if (entity instanceof Display) {
             // Near-camera displays: transformed boxes cannot be trusted - vanilla decides.
@@ -130,23 +128,53 @@ public abstract class MEntityRenderer<T extends Entity> {
 
         boolean visible;
         if (useVanilla) {
-            visible = frustum.isVisible(this.lcull$box(entity));
+            AABB box = this.lcull$box(entity);
+            if (box.hasNaN() || box.getSize() == 0.0D) {
+                double x = entity.getX();
+                double y = entity.getY();
+                double z = entity.getZ();
+                visible = iFrustum.lcull$isVisible(x - 2.0D, y - 2.0D, z - 2.0D, x + 2.0D, y + 2.0D, z + 2.0D);
+            } else {
+                visible = iFrustum.lcull$isVisible(
+                    box.minX - 1.0D, box.minY - 1.0D, box.minZ - 1.0D,
+                    box.maxX + 1.0D, box.maxY + 1.0D, box.maxZ + 1.0D
+                );
+            }
         } else {
             AABB box = this.lcull$box(entity);
-            visible = iFrustum.lcull$isVisible(
-                box.minX - CULL_MARGIN,
-                box.minY - CULL_MARGIN,
-                box.minZ - CULL_MARGIN,
-                box.maxX + CULL_MARGIN,
-                box.maxY + CULL_MARGIN,
-                box.maxZ + CULL_MARGIN
-            );
+            if (box.hasNaN() || box.getSize() == 0.0D) {
+                double x = entity.getX();
+                double y = entity.getY();
+                double z = entity.getZ();
+                visible = iFrustum.lcull$isVisible(x - 2.0D, y - 2.0D, z - 2.0D, x + 2.0D, y + 2.0D, z + 2.0D);
+            } else {
+                double margin = lcull$effectiveMargin(entity);
+                visible = iFrustum.lcull$isVisible(
+                    box.minX - margin,
+                    box.minY - margin,
+                    box.minZ - margin,
+                    box.maxX + margin,
+                    box.maxY + margin,
+                    box.maxZ + margin
+                );
+            }
         }
 
         cache.lcull$setLastFrustumSig(frustumSig);
         cache.lcull$setLastEntitySig(entitySig);
         cache.lcull$setCachedVisible(visible);
         return visible;
+    }
+
+    @Unique
+    private static double lcull$effectiveMargin(Entity entity) {
+        double lenSqr = entity.getDeltaMovement().lengthSqr();
+        if (lenSqr > 0.25D) {
+            double v = Math.sqrt(lenSqr);
+            double m = CULL_MARGIN + v * 0.2D;
+            return m > 4.0D ? 4.0D : m;
+        }
+        return CULL_MARGIN;
     }
 
     /**
