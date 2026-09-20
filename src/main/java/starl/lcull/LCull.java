@@ -52,7 +52,7 @@ import net.fabricmc.api.ModInitializer;
  */
 public final class LCull {
     public static final String MOD_ID = "lcull";
-    public static final String VERSION = /*$ mod_version */ "1.0.0";
+    public static final String VERSION = /*$ mod_version */ "1.0.1";
     private static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     private LCull() {

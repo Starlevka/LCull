@@ -28,8 +28,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 /**
  * @author Starlev
- * Silences the benign "Ignoring chunk since it's not in the view range" log spam emitted by
- * {@link ClientChunkCache} when chunk data packets arrive for chunks outside the client's view
+ * Silences the benign "Ignoring chunk since it's not in the view range" log spam caused by MFrustum
+ * emitted by {@link ClientChunkCache} when chunk data packets arrive for chunks outside the client's view
  * distance. The warning is purely cosmetic - the chunk is still ignored exactly as before - but it
  * floods the log on busy servers, so we drop just that one message.
  */

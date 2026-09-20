@@ -1,6 +1,15 @@
 ![LCull icon](https://cdn.modrinth.com/data/cached_images/2e7022e9a5f1d124e506e56f3f2075e831c623c5_0.webp)
 
+<div align="center">
+  
 <sub><i>The project code was created with help of Artificial Intelligence.</i></sub>
+</div>
+<div align="center">
+<a href="https://modrinth.com/mod/lcull"><img alt="Available on Modrinth" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/available/modrinth_vector.svg"></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/lcull"><img alt="Available on CurseForge" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/available/curseforge_vector.svg"></a>
+<a href="https://github.com/Starlevka/LCull"><img alt="GitHub" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact-minimal/available/github_vector.svg"></a>
+<a href="https://github.com/Starlevka/LCull/issues"><img alt="Issues" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/documentation/issues_vector.svg"></a>
+</div>
 
 An open source mod with cursed, performant Frustum logic for heavy culling scenes. **More FPS, but has some side effects**.
 
