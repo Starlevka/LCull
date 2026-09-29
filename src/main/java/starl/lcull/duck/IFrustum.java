@@ -24,15 +24,13 @@ package starl.lcull.duck;
  * Duck interface over the patched client {@code Frustum}, implemented by
  * {@code MFrustum} and consumed by {@code MEntityRenderer}.
  *
- * <p>Exposes LCull's allocation-free visibility test plus a precomputed signature of the current
- * frustum state, so entity culling can reuse cached decisions without rebuilding the camera side of
- * the cache key for every entity.</p>
+ * <p>Exposes LCull's allocation-free visibility test.</p>
  */
 public interface IFrustum {
 
     /**
      * Vanilla visibility semantics over the shared JOML tester: everything except fully-outside
-     * counts as visible - {@code result == -2 || result == -1}.
+     * counts as visible.
      */
     boolean lcull$isVisible(
         double minX,
@@ -42,23 +40,4 @@ public interface IFrustum {
         double maxY,
         double maxZ
     );
-
-    /**
-     * Precomputed signature of the current frustum state (camera position/orientation plus the
-     * projection-dependent parts of the clip matrix), refreshed when the frustum is rebuilt.
-     */
-    long lcull$frustumSig();
-
-    /**
-     * Camera forward direction in world space (the normalized view vector the frustum was built
-     * from). Exposed for frustum-adjacent logic without allocating or reaching for the
-     * {@code Camera} instance.
-     */
-    float lcull$viewX();
-
-    /** @see #lcull$viewX() */
-    float lcull$viewY();
-
-    /** @see #lcull$viewX() */
-    float lcull$viewZ();
 }

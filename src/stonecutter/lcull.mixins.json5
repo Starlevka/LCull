@@ -5,7 +5,6 @@
   "compatibilityLevel": "${java}",
   "client": [
     "MClientChunkCache",
-    "MEntity",
     "MEntityRenderer",
     "MFrustum"
   ],

@@ -131,21 +131,23 @@ sealed class Loader(val id: String) {
 		)
 
 		override fun generateManifest(ctx: Context): String {
+			val mcMin = ctx.minecraftMinVersion
 			val mcVersionRange = if (ctx.stonecutter.eval(ctx.stonecutterVersion, "<=" + ctx.currentMcVersion)) {
 				val maxVersion = ctx.minecraftMaxVersion
 				if (maxVersion == ctx.currentMcVersion && ctx.stonecutterVersion == ctx.currentMcVersion) {
-					"[${ctx.stonecutterVersion},)"
+					if (mcMin != ctx.currentMcVersion) "[${mcMin},${ctx.currentMcVersion}]" else "[${ctx.stonecutterVersion},)"
 				} else {
-					"[${ctx.stonecutterVersion},${maxVersion}]"
+					"[${mcMin},${maxVersion}]"
 				}
 			} else {
 				"[${ctx.currentMcVersion}]"
 			}
 			val forgeVersionRange = "[${ctx.currentMcVersion},)"
+			val loaderRange = if (ctx.stonecutter.eval(ctx.currentMcVersion, "<1.20")) "[43,)" else "[47,)"
 
 			return buildString {
 				appendLine("modLoader = \"javafml\"")
-				appendLine("loaderVersion = \"[47,)\"")
+				appendLine("loaderVersion = \"${loaderRange}\"")
 				appendLine("license = \"LGPL-3.0-only\"")
 				appendLine()
 				appendLine("[[mods]]")

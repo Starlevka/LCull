@@ -22,7 +22,6 @@ package starl.lcull.mixins;
 import net.minecraft.client.multiplayer.ClientChunkCache;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -36,8 +35,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(ClientChunkCache.class)
 public abstract class MClientChunkCache {
 
-    @Unique private static final boolean LCULL$SILENCE_VIEW_RANGE_LOG = true;
-
+    //? if >=1.19.4 {
     @Redirect(
         method = "replaceBiomes",
         at = @At(
@@ -48,11 +46,11 @@ public abstract class MClientChunkCache {
         require = 0
     )
     private void lcull$silenceViewRangeLogBiomes(Logger logger, String message, Object p0, Object p1) {
-        if (!LCULL$SILENCE_VIEW_RANGE_LOG
-            || !"Ignoring chunk since it's not in the view range: {}, {}".equals(message)) {
+        if (!"Ignoring chunk since it's not in the view range: {}, {}".equals(message)) {
             logger.warn(message, p0, p1);
         }
     }
+    //?}
 
     @Redirect(
         method = "replaceWithPacketData",
@@ -64,8 +62,7 @@ public abstract class MClientChunkCache {
         require = 0
     )
     private void lcull$silenceViewRangeLogPacket(Logger logger, String message, Object p0, Object p1) {
-        if (!LCULL$SILENCE_VIEW_RANGE_LOG
-            || !"Ignoring chunk since it's not in the view range: {}, {}".equals(message)) {
+        if (!"Ignoring chunk since it's not in the view range: {}, {}".equals(message)) {
             logger.warn(message, p0, p1);
         }
     }

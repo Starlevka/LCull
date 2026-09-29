@@ -52,7 +52,7 @@ import net.fabricmc.api.ModInitializer;
  */
 public final class LCull {
     public static final String MOD_ID = "lcull";
-    public static final String VERSION = /*$ mod_version */ "1.0.1";
+    public static final String VERSION = /*$ mod_version */ "1.1.0";
     private static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     private LCull() {
@@ -61,7 +61,6 @@ public final class LCull {
     /** Single shared init point; safe to call from any loader thread during bootstrap. */
     public static void init() {
         LOGGER.info("LCull v" + VERSION + " Initialized!");
-        LOGGER.info("WARNING! LCULL COULD PRODUCE NEGATIVE PERFORMANCE!");
     }
 
     //? if fabric {

@@ -1,5 +1,9 @@
 blank_issues_enabled: false
 contact_links:
-  - name: LCull Issues
-    url: https://github.com/Starlevka/LCull/issues
-    about: Search existing issues before reporting a bug.
+  - name: LCull on Modrinth
+    url: https://modrinth.com/mod/lcull
+    about: Downloads, available versions and the full changelog. Version-specific questions are
+      usually already answered there.
+  - name: LCull on CurseForge
+    url: https://www.curseforge.com/minecraft/mc-mods/lcull
+    about: Downloads for the CurseForge and NeoForge builds.

@@ -1,8 +1,8 @@
-![LCull icon](https://cdn.modrinth.com/data/cached_images/2e7022e9a5f1d124e506e56f3f2075e831c623c5_0.webp)
-
 <div align="center">
   
-<sub><i>The project code was created with help of Artificial Intelligence.</i></sub>
+<sub>![LCull icon](https://cdn.modrinth.com/data/cached_images/2e7022e9a5f1d124e506e56f3f2075e831c623c5_0.webp)
+
+<i>The project code was created with help of Artificial Intelligence.</i></sub>
 </div>
 <div align="center">
 <a href="https://modrinth.com/mod/lcull"><img alt="Available on Modrinth" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/available/modrinth_vector.svg"></a>
@@ -16,14 +16,13 @@ An open source mod with cursed, performant Frustum logic for heavy culling scene
 ## Advantages
 - Culling entities that off-screen:
     - Helps in different heavy scenes which **increases FPS**. (like in CounterMine 2)
-- Accelerates work by **x2** with **Entity Culling**, **Sodium** mods, cuz they're professionals here yea.
+- Accelerates work by **x2** with **Entity Culling**, **Sodium/Embeddium** mods, cuz they're professionals here yea.
 
 ## Weaknesses
-- Instant dissappearing entities that off-screen.
 - Useless for other scenes:
     - Low amounts of entities
     - Entities behind the walls.
-- Not effective in singleplayer.
+    - Modded mobs (probably)
 - **Increases CPU load.**
 
 ## Benchmarks
@@ -51,11 +50,13 @@ Minecraft keeps every loaded entity in the render loop even when it is behind yo
 
 ## How the LCull's Frustum checks works?
 
-Every frame the game already builds a Frustum for the active camera. LCull asks that frustum whether an entity's axis-aligned bounding box lives inside the visible volume, using the same cube-in-frustum test the renderer uses for chunks. When the whole box is outside, the entity is skipped during rendering and never reaches the draw call. The tricky part is stability: the frustum shifts a little whenever you move, change FOV or resize the window, and a naive check would make entities flicker at the screen edges. To avoid that LCull keeps a tiny per-entity cache of the last cull decision and only flips it when the camera context stays stable for a few ticks. The cache key is a quantized camera position plus the view direction plus the entity position, so a small camera jitter does not invalidate the result. This hysteresis gives smooth culling without re-evaluating every entity every frame.
+Every frame the game already builds a Frustum for the active camera. LCull asks that frustum whether an entity's axis-aligned bounding box lives inside the visible volume - the same six-plane test the renderer uses for chunks, evaluated in a branchless form that resolves the per-corner sign choices once per frame instead of per entity. When the whole box is outside, the entity is skipped during rendering and never reaches the draw call.
+
+Two things keep the result from flickering. The safety margin around the box grows with the entity's speed - 1 block for a stationary entity, up to 2.5 for a fast mover - so nothing pops mid-stride; and a projectile cannot exempt itself by moving fast, because the margin is capped. LCull also leaves vanilla's own escapes intact: anything the renderer marks as never-cullable (fishing hooks, the ender dragon, lightning bolts, name-tag displays) is handed straight back to vanilla, and a leashed mob stays visible while the thing holding its rope is. Both deliberately leave a little on the table rather than dropping something the player can see.
 
 ## What the Minecraft and LCull problem?
 
-Minecraft does apply its own frustum to chunks and block entities, but the per-entity render loop still iterates and submits everything that is loaded, which is exactly why off-screen mobs cost as much as on-screen ones. LCull removes that off-screen cost, yet it cannot remove entities hidden behind walls, because that needs occlusion culling and a visibility graph, a much harder problem than a frustum test. The mod also does nothing useful when there are only a few entities, or in singleplayer where the simulation, not rendering, is the bottleneck. Because culling is decided on the render thread, entities can pop out the instant they leave the view; that is the intended trade for the FPS win, and it trades a little extra CPU work for the frustum evaluation. There is also a narrow compatibility edge: a mod that assumes every entity is "rendered" each frame could behave oddly, which is why LCull stays an opt-in, tunable tweak rather than a silent override.
+Minecraft does apply its own frustum to chunks and block entities, but the per-entity render loop still iterates and submits everything that is loaded, which is exactly why off-screen mobs cost as much as on-screen ones. LCull removes that off-screen cost, but it cannot remove entities hidden behind walls, because that needs occlusion culling and a visibility graph, a much harder problem than a frustum test. The mod also does nothing useful when there are only a few entities, or in singleplayer where the simulation, not rendering, is the bottleneck. Because culling is decided on the render thread, entities can pop out the instant they leave the view; that is the intended trade for the FPS win, and it trades a little extra CPU work for the frustum evaluation. There is also a narrow compatibility edge: a mod that assumes every entity is "rendered" each frame could behave oddly, which is why LCull stays an opt-in, tunable tweak rather than a silent override.
 
 ## Links
 - [Source](https://github.com/Starlevka/LCull)

@@ -23,7 +23,7 @@ body:
       label: Steps to reproduce
       description: Minimal, ordered list of steps that trigger the issue.
       placeholder: |
-        1. Install LCull 1.0.0 on 1.21.11 (Fabric)
+        1. Install LCull 1.1.0 on 1.21.11 (Fabric)
         2. Join the server
         3. Observe the freeze
     validations:
@@ -36,6 +36,7 @@ body:
       description: Which Minecraft version did this happen on?
       multiple: true
       options:
+        - 1.19.2
         - 1.20.1
         - 1.21-1.21.1
         - 1.21.4
@@ -44,6 +45,7 @@ body:
         - 1.21.11
         - 26.1-26.1.2
         - 26.2
+        - 26.3
     validations:
       required: true
 
